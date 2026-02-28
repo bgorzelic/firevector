@@ -1,13 +1,20 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import { LoginForm } from '@/components/login-form';
+import Link from 'next/link';
+import { ResetPasswordForm } from '@/components/reset-password-form';
 
 export const metadata: Metadata = {
-  title: 'Sign In — Firevector',
-  description: 'Sign in to Firevector, the wildfire observation intelligence platform.',
+  title: 'Reset Password — Firevector',
+  description: 'Set a new password for your Firevector account.',
 };
 
-export default function LoginPage() {
+export default async function ResetPasswordPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ token?: string }>;
+}) {
+  const { token } = await searchParams;
+
   return (
     <div className="relative flex min-h-svh flex-col items-center justify-center bg-[#0a0a0a] px-4 py-12">
       {/* Fire gradient bar at top */}
@@ -55,7 +62,7 @@ export default function LoginPage() {
 
           <div className="text-center">
             <h1 className="text-2xl font-bold tracking-[0.2em] text-zinc-50">FIREVECTOR</h1>
-            <p className="mt-1 text-sm text-zinc-500">Wildfire Observation Intelligence</p>
+            <p className="mt-1 text-sm text-zinc-500">Reset your password</p>
           </div>
         </div>
 
@@ -69,8 +76,39 @@ export default function LoginPage() {
           aria-hidden="true"
         />
 
-        {/* Sign-in section */}
-        <LoginForm />
+        {/* Content */}
+        {!token ? (
+          <div className="flex flex-col gap-4">
+            <div className="rounded-md border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+              Missing reset token. Please request a new password reset link.
+            </div>
+            <div className="text-center">
+              <Link
+                href="/forgot-password"
+                className="text-sm text-amber-500 hover:text-amber-400 transition-colors"
+              >
+                Request a new reset link
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <>
+            <p className="mb-6 text-center text-sm text-zinc-400">
+              Enter your new password below.
+            </p>
+            <ResetPasswordForm token={token} />
+          </>
+        )}
+
+        {/* Back to sign in link */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-zinc-500">
+            Remember your password?{' '}
+            <Link href="/login" className="text-amber-500 hover:text-amber-400 transition-colors">
+              Sign in
+            </Link>
+          </p>
+        </div>
       </main>
 
       {/* Footer */}

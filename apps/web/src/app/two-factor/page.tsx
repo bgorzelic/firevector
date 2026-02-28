@@ -1,13 +1,19 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import { LoginForm } from '@/components/login-form';
+import { TwoFactorChallenge } from '@/components/two-factor-challenge';
 
 export const metadata: Metadata = {
-  title: 'Sign In — Firevector',
-  description: 'Sign in to Firevector, the wildfire observation intelligence platform.',
+  title: 'Two-Factor Authentication — Firevector',
+  description: 'Enter your two-factor authentication code to sign in.',
 };
 
-export default function LoginPage() {
+export default async function TwoFactorPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ email?: string }>;
+}) {
+  const { email } = await searchParams;
+
   return (
     <div className="relative flex min-h-svh flex-col items-center justify-center bg-[#0a0a0a] px-4 py-12">
       {/* Fire gradient bar at top */}
@@ -55,7 +61,7 @@ export default function LoginPage() {
 
           <div className="text-center">
             <h1 className="text-2xl font-bold tracking-[0.2em] text-zinc-50">FIREVECTOR</h1>
-            <p className="mt-1 text-sm text-zinc-500">Wildfire Observation Intelligence</p>
+            <p className="mt-1 text-sm text-zinc-500">Two-Factor Authentication</p>
           </div>
         </div>
 
@@ -69,8 +75,8 @@ export default function LoginPage() {
           aria-hidden="true"
         />
 
-        {/* Sign-in section */}
-        <LoginForm />
+        {/* 2FA Challenge Form */}
+        <TwoFactorChallenge email={email ?? ''} />
       </main>
 
       {/* Footer */}

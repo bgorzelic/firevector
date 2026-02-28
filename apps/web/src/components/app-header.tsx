@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, Flame, LayoutDashboard, Plus } from 'lucide-react';
+import { Menu, Flame, LayoutDashboard, Plus, Settings } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import {
   Sheet,
@@ -27,6 +27,11 @@ const navItems = [
     label: 'New Observation',
     href: '/observations/new',
     icon: Plus,
+  },
+  {
+    label: 'Settings',
+    href: '/settings',
+    icon: Settings,
   },
 ];
 

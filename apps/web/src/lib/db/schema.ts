@@ -8,6 +8,9 @@ export const users = pgTable('users', {
   emailVerified: timestamp('email_verified', { mode: 'date' }),
   name: text('name'),
   image: text('image'),
+  passwordHash: text('password_hash'),
+  twoFactorEnabled: boolean('two_factor_enabled').notNull().default(false),
+  twoFactorSecret: text('two_factor_secret'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -39,6 +42,26 @@ export const verificationTokens = pgTable('verification_tokens', {
   identifier: text('identifier').notNull(),
   token: text('token').notNull().unique(),
   expires: timestamp('expires').notNull(),
+});
+
+// ── Email Verification Tokens ─────────────────────────────────────────────────
+
+export const emailVerificationTokens = pgTable('email_verification_tokens', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  token: text('token').notNull().unique(),
+  expires: timestamp('expires').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// ── Password Reset Tokens ─────────────────────────────────────────────────────
+
+export const passwordResetTokens = pgTable('password_reset_tokens', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  token: text('token').notNull().unique(),
+  expires: timestamp('expires').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 // ── Observations ───────────────────────────────────────────────────────────────

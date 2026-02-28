@@ -1,7 +1,24 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema, type LoginValues } from '@/lib/validations/auth';
+import { checkTwoFactorStatus } from '@/lib/actions/auth';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
 function GoogleIcon() {
   return (
@@ -35,15 +52,153 @@ function GoogleIcon() {
 }
 
 export function LoginForm() {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  async function onSubmit(values: LoginValues) {
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      // Check if 2FA is required before attempting sign-in
+      const twoFactorCheck = await checkTwoFactorStatus(values.email, values.password);
+      if (twoFactorCheck.error) {
+        setError(twoFactorCheck.error);
+        return;
+      }
+
+      if (twoFactorCheck.twoFactorRequired) {
+        router.push(`/two-factor?email=${encodeURIComponent(values.email)}`);
+        return;
+      }
+
+      const result = await signIn('credentials', {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError('Invalid email or password');
+      } else {
+        router.push('/dashboard');
+        router.refresh();
+      }
+    } catch {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
-    <Button
-      size="lg"
-      variant="outline"
-      className="w-full gap-3 text-base border-zinc-700 bg-zinc-900 text-zinc-100 hover:bg-zinc-800 hover:text-white hover:border-zinc-600 transition-all duration-200 shadow-lg"
-      onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
-    >
-      <GoogleIcon />
-      Sign in with Google
-    </Button>
+    <div className="flex flex-col gap-5">
+      {/* Google OAuth */}
+      <Button
+        size="lg"
+        variant="outline"
+        className="w-full gap-3 text-base border-zinc-700 bg-zinc-900 text-zinc-100 hover:bg-zinc-800 hover:text-white hover:border-zinc-600 transition-all duration-200 shadow-lg"
+        onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+      >
+        <GoogleIcon />
+        Sign in with Google
+      </Button>
+
+      {/* Divider */}
+      <div className="relative flex items-center">
+        <div className="flex-1 border-t border-zinc-800" />
+        <span className="px-3 text-xs text-zinc-500">or</span>
+        <div className="flex-1 border-t border-zinc-800" />
+      </div>
+
+      {/* Email/Password Form */}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          {error && (
+            <div className="rounded-md border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+              {error}
+            </div>
+          )}
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-zinc-300">Email</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="you@example.com"
+                    className="border-zinc-700 bg-zinc-900 text-zinc-100 placeholder:text-zinc-600"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-zinc-300">Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="Your password"
+                    className="border-zinc-700 bg-zinc-900 text-zinc-100 placeholder:text-zinc-600"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="mt-2 w-full bg-amber-500 text-white hover:bg-amber-600 transition-colors"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 size-4 animate-spin" />
+                Signing in...
+              </>
+            ) : (
+              'Sign in'
+            )}
+          </Button>
+        </form>
+      </Form>
+
+      {/* Links */}
+      <div className="flex items-center justify-between">
+        <Link
+          href="/forgot-password"
+          className="text-sm text-zinc-500 transition-colors hover:text-amber-400"
+        >
+          Forgot password?
+        </Link>
+        <Link
+          href="/register"
+          className="text-sm text-amber-500 transition-colors hover:text-amber-400"
+        >
+          Create account &rarr;
+        </Link>
+      </div>
+    </div>
   );
 }

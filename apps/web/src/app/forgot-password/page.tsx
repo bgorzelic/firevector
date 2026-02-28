@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import { LoginForm } from '@/components/login-form';
+import Link from 'next/link';
+import { ForgotPasswordForm } from '@/components/forgot-password-form';
 
 export const metadata: Metadata = {
-  title: 'Sign In — Firevector',
-  description: 'Sign in to Firevector, the wildfire observation intelligence platform.',
+  title: 'Forgot Password — Firevector',
+  description: 'Reset your Firevector password.',
 };
 
-export default function LoginPage() {
+export default function ForgotPasswordPage() {
   return (
     <div className="relative flex min-h-svh flex-col items-center justify-center bg-[#0a0a0a] px-4 py-12">
       {/* Fire gradient bar at top */}
@@ -55,7 +56,7 @@ export default function LoginPage() {
 
           <div className="text-center">
             <h1 className="text-2xl font-bold tracking-[0.2em] text-zinc-50">FIREVECTOR</h1>
-            <p className="mt-1 text-sm text-zinc-500">Wildfire Observation Intelligence</p>
+            <p className="mt-1 text-sm text-zinc-500">Forgot your password?</p>
           </div>
         </div>
 
@@ -69,8 +70,23 @@ export default function LoginPage() {
           aria-hidden="true"
         />
 
-        {/* Sign-in section */}
-        <LoginForm />
+        {/* Description */}
+        <p className="mb-6 text-center text-sm text-zinc-400">
+          Enter your email and we&apos;ll send you a reset link.
+        </p>
+
+        {/* Forgot password form */}
+        <ForgotPasswordForm />
+
+        {/* Back to sign in link */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-zinc-500">
+            Remember your password?{' '}
+            <Link href="/login" className="text-amber-500 hover:text-amber-400 transition-colors">
+              Sign in
+            </Link>
+          </p>
+        </div>
       </main>
 
       {/* Footer */}
