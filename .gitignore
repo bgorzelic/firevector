@@ -38,4 +38,5 @@ coverage/
 # Misc
 *.log
 .claude/worktrees/
+.worktrees/
 .vercel
