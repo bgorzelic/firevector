@@ -135,3 +135,98 @@ export async function createObservation(userId: string, data: ObservationFormVal
   revalidatePath('/dashboard');
   redirect('/dashboard');
 }
+
+export async function updateObservation(
+  userId: string,
+  observationId: string,
+  data: ObservationFormValues
+) {
+  // Verify ownership
+  const [existing] = await db
+    .select({ id: observations.id })
+    .from(observations)
+    .where(and(eq(observations.id, observationId), eq(observations.userId, userId)))
+    .limit(1);
+
+  if (!existing) throw new Error('Observation not found');
+
+  // Recompute derived fields server-side
+  const windSlope: WindSlope = {
+    observed: {
+      eye_level_ws: data.observedEyeLevelWs ?? null,
+      midflame_ws: data.observedMidflameWs ?? null,
+      slope_contribution: data.observedSlopeContribution ?? null,
+      total_ews: null,
+    },
+    predicted: {
+      eye_level_ws: data.predictedEyeLevelWs ?? null,
+      midflame_ws: data.predictedMidflameWs ?? null,
+      slope_contribution: data.predictedSlopeContribution ?? null,
+      total_ews: null,
+    },
+    ews_ratio: null,
+  };
+
+  const ros: RateOfSpread = {
+    observed_ros: data.observedRos ?? null,
+    ros_direction: data.rosDirection ?? null,
+    calculated_ros: null,
+  };
+
+  const computed = recompute(windSlope, ros);
+
+  await db
+    .update(observations)
+    .set({
+      status: data.status,
+      incidentName: data.incidentName,
+      observerName: data.observerName,
+      observationDatetime: data.observationDatetime ? new Date(data.observationDatetime) : null,
+      latitude: data.latitude ?? null,
+      longitude: data.longitude ?? null,
+      perimeterNotes: data.perimeterNotes,
+      growthNotes: data.growthNotes,
+      relativeHumidity: data.relativeHumidity ?? null,
+      fuelLitter: data.fuelLitter,
+      fuelGrass: data.fuelGrass,
+      fuelCrown: data.fuelCrown,
+      observedEyeLevelWs: data.observedEyeLevelWs ?? null,
+      observedMidflameWs: data.observedMidflameWs ?? null,
+      observedSlopeContribution: data.observedSlopeContribution ?? null,
+      observedTotalEws: computed.windSlope.observed.total_ews,
+      predictedEyeLevelWs: data.predictedEyeLevelWs ?? null,
+      predictedMidflameWs: data.predictedMidflameWs ?? null,
+      predictedSlopeContribution: data.predictedSlopeContribution ?? null,
+      predictedTotalEws: computed.windSlope.predicted.total_ews,
+      ewsRatio: computed.windSlope.ews_ratio,
+      observedRos: data.observedRos ?? null,
+      rosDirection: data.rosDirection ?? null,
+      calculatedRos: computed.ros.calculated_ros,
+      safetyLookouts: data.lookouts,
+      safetyCommunications: data.communications,
+      safetyEscapeRoutes: data.escapeRoutes,
+      safetyZones: data.safetyZones,
+      updatedAt: new Date(),
+    })
+    .where(eq(observations.id, observationId));
+
+  // Replace log entries
+  await db
+    .delete(observationLogEntries)
+    .where(eq(observationLogEntries.observationId, observationId));
+
+  if (data.observationLog.length > 0) {
+    await db.insert(observationLogEntries).values(
+      data.observationLog.map((entry, i) => ({
+        observationId,
+        time: entry.time,
+        fireBehaviorNotes: entry.fire_behavior_notes,
+        weatherTrends: entry.weather_trends,
+        sortOrder: i,
+      })),
+    );
+  }
+
+  revalidatePath('/dashboard');
+  redirect('/dashboard');
+}

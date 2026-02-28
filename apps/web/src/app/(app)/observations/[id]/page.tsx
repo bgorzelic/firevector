@@ -1,7 +1,7 @@
 import { redirect, notFound } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { getObservation } from '@/lib/actions/observations';
-import { ObservationForm } from '@/components/observation-form';
+import { EditObservationClient } from './client';
 
 interface EditObservationPageProps {
   params: Promise<{ id: string }>;
@@ -53,7 +53,11 @@ export default async function EditObservationPage({ params }: EditObservationPag
     <div className="max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-1">Edit Observation</h1>
       <p className="mb-6 text-sm text-muted-foreground">{obs.incidentName || 'Unnamed'}</p>
-      <ObservationForm initialData={initialData} />
+      <EditObservationClient
+        userId={session.user.id}
+        observationId={id}
+        initialData={initialData}
+      />
     </div>
   );
 }
