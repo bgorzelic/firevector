@@ -31,7 +31,8 @@ export function UserMenu() {
         {user?.image ? (
           <button
             className="flex size-9 items-center justify-center rounded-full ring-offset-background transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 overflow-hidden"
-            aria-label="User menu"
+            aria-label={`User menu for ${user.name ?? 'user'}`}
+            aria-haspopup="menu"
           >
             <img
               src={user.image}
@@ -43,25 +44,24 @@ export function UserMenu() {
         ) : (
           <button
             className="flex size-9 items-center justify-center rounded-full bg-amber-500 text-xs font-bold text-white ring-offset-background transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            aria-label="User menu"
+            aria-label={`User menu for ${user?.name ?? 'user'}`}
+            aria-haspopup="menu"
           >
-            {getInitials(user?.name)}
+            <span aria-hidden="true">{getInitials(user?.name)}</span>
           </button>
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
         <DropdownMenuLabel className="flex flex-col gap-0.5">
           <span className="font-semibold">{user?.name ?? 'User'}</span>
-          <span className="text-xs font-normal text-muted-foreground">
-            {user?.email ?? ''}
-          </span>
+          <span className="text-xs font-normal text-muted-foreground">{user?.email ?? ''}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           variant="destructive"
           onClick={() => signOut({ callbackUrl: '/login' })}
         >
-          <LogOut className="size-4" />
+          <LogOut className="size-4" aria-hidden="true" />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -28,7 +28,7 @@ const DEFAULT_VIEW = {
 };
 
 function formatNumber(n: number | null | undefined): string {
-  if (n === null || n === undefined) return '—';
+  if (n === null || n === undefined) return '\u2014';
   return n.toFixed(2);
 }
 
@@ -36,10 +36,12 @@ function MapPlaceholder() {
   return (
     <div className="flex h-full w-full items-center justify-center rounded-lg border border-dashed border-border bg-muted/30">
       <div className="text-center">
-        <MapPin className="mx-auto mb-2 size-8 text-muted-foreground" />
+        <MapPin className="mx-auto mb-2 size-8 text-muted-foreground" aria-hidden="true" />
         <p className="text-sm font-medium text-foreground">Map unavailable</p>
         <p className="mt-1 text-xs text-muted-foreground">
-          Set <code className="rounded bg-muted px-1 py-0.5 font-mono">NEXT_PUBLIC_MAPBOX_TOKEN</code> to enable the map.
+          Set{' '}
+          <code className="rounded bg-muted px-1 py-0.5 font-mono">NEXT_PUBLIC_MAPBOX_TOKEN</code>{' '}
+          to enable the map.
         </p>
       </div>
     </div>
@@ -61,9 +63,7 @@ export function ObservationsMap({ observations, className }: ObservationsMapProp
   }, []);
 
   // Filter to only observations with valid coordinates
-  const pins = observations.filter(
-    (o) => o.latitude !== null && o.longitude !== null
-  );
+  const pins = observations.filter((o) => o.latitude !== null && o.longitude !== null);
 
   if (!MAPBOX_TOKEN) {
     return (
@@ -80,15 +80,20 @@ export function ObservationsMap({ observations, className }: ObservationsMapProp
       {/* Mobile collapse toggle */}
       <button
         type="button"
-        className="mb-2 flex w-full items-center justify-between text-sm font-medium text-muted-foreground md:hidden"
+        className="mb-2 flex w-full min-h-[44px] items-center justify-between text-sm font-medium text-muted-foreground md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:rounded-sm"
         onClick={() => setIsCollapsed((v) => !v)}
         aria-expanded={!isCollapsed}
+        aria-controls="observations-map-panel"
+        aria-label={isCollapsed ? 'Show observation map' : 'Hide observation map'}
       >
-        <span>Observation Map</span>
-        <span className="text-xs">{isCollapsed ? 'Show' : 'Hide'}</span>
+        <span aria-hidden="true">Observation Map</span>
+        <span className="text-xs" aria-hidden="true">
+          {isCollapsed ? 'Show' : 'Hide'}
+        </span>
       </button>
 
       <div
+        id="observations-map-panel"
         className={[
           'overflow-hidden rounded-lg border border-border transition-all duration-200',
           isCollapsed ? 'hidden md:block' : 'block',
@@ -116,11 +121,19 @@ export function ObservationsMap({ observations, className }: ObservationsMapProp
               }}
             >
               <div
-                className="flex size-7 cursor-pointer items-center justify-center rounded-full border-2 border-white shadow-md transition-transform hover:scale-110"
+                role="button"
+                tabIndex={0}
+                className="flex size-7 cursor-pointer items-center justify-center rounded-full border-2 border-white shadow-md transition-transform hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 style={{ background: 'linear-gradient(135deg, #f59e0b, #ea580c)' }}
-                aria-label={obs.incidentName || 'Observation'}
+                aria-label={`View observation: ${obs.incidentName || 'Unnamed observation'}`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleMarkerClick(obs.id);
+                  }
+                }}
               >
-                <MapPin className="size-3.5 text-white" />
+                <MapPin className="size-3.5 text-white" aria-hidden="true" />
               </div>
             </Marker>
           ))}

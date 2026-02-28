@@ -45,13 +45,16 @@ export function SafetySection({ form }: SafetySectionProps) {
 
   return (
     <div className="space-y-5">
-      {/* LCES status banner */}
+      {/* LCES status banner — aria-live announces status change to screen readers */}
       <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
         className={cn(
           'flex items-center justify-between rounded-lg border px-4 py-3 transition-all duration-300',
           lcessComplete
             ? 'border-green-500/30 bg-green-500/10 shadow-[0_0_12px_rgba(34,197,94,0.1)]'
-            : 'border-amber-500/20 bg-amber-500/5',
+            : 'border-amber-500/20 bg-amber-500/5'
         )}
       >
         <div>
@@ -67,7 +70,7 @@ export function SafetySection({ form }: SafetySectionProps) {
             'border text-xs font-semibold px-3 py-1',
             lcessComplete
               ? 'border-green-500/40 bg-green-500/20 text-green-400 shadow-[0_0_8px_rgba(34,197,94,0.25)]'
-              : 'border-amber-500/30 bg-amber-500/10 text-amber-400',
+              : 'border-amber-500/30 bg-amber-500/10 text-amber-400'
           )}
         >
           {lcessComplete ? 'LCES Complete' : 'LCES Incomplete'}

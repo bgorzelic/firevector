@@ -13,13 +13,20 @@ import { Button } from '@/components/ui/button';
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
+  const currentLabel =
+    theme === 'light'
+      ? 'Switch theme (currently Light)'
+      : theme === 'dark'
+        ? 'Switch theme (currently Dark)'
+        : 'Switch theme (currently System)';
+
   const currentIcon =
     theme === 'light' ? (
-      <Sun className="size-4" />
+      <Sun className="size-4" aria-hidden="true" />
     ) : theme === 'dark' ? (
-      <Moon className="size-4" />
+      <Moon className="size-4" aria-hidden="true" />
     ) : (
-      <Monitor className="size-4" />
+      <Monitor className="size-4" aria-hidden="true" />
     );
 
   return (
@@ -29,22 +36,23 @@ export function ThemeToggle() {
           variant="ghost"
           size="icon"
           className="size-9"
-          aria-label="Toggle theme"
+          aria-label={currentLabel}
+          aria-haspopup="menu"
         >
           {currentIcon}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme('light')}>
-          <Sun className="size-4" />
+          <Sun className="size-4" aria-hidden="true" />
           Light
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme('dark')}>
-          <Moon className="size-4" />
+          <Moon className="size-4" aria-hidden="true" />
           Dark
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme('system')}>
-          <Monitor className="size-4" />
+          <Monitor className="size-4" aria-hidden="true" />
           System
         </DropdownMenuItem>
       </DropdownMenuContent>

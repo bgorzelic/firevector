@@ -156,9 +156,39 @@ export function ObservationForm({ initialData, onSubmit }: ObservationFormProps)
     onSubmit?.(values);
   }, [form, onSubmit]);
 
+  // Compose a concise summary for screen reader announcements when calcs update.
+  const calcsSummary = (() => {
+    const parts: string[] = [];
+    if (derived.observedTotalEws !== null)
+      parts.push(`Observed EWS: ${derived.observedTotalEws.toFixed(1)} mph`);
+    if (derived.predictedTotalEws !== null)
+      parts.push(`Predicted EWS: ${derived.predictedTotalEws.toFixed(1)} mph`);
+    if (derived.ewsRatio !== null)
+      parts.push(`EWS Ratio: ${derived.ewsRatio.toFixed(2)}×`);
+    if (derived.calculatedRos !== null)
+      parts.push(`Projected ROS: ${derived.calculatedRos.toFixed(2)} ch/hr`);
+    return parts.length > 0 ? parts.join('. ') : '';
+  })();
+
   return (
     <Form {...form}>
-      <form className="space-y-0" onSubmit={(e) => e.preventDefault()}>
+      {/* Global sr-only live region for calculated value changes */}
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {calcsSummary}
+      </div>
+
+      <form
+        id="observation-form"
+        className="space-y-0"
+        onSubmit={(e) => e.preventDefault()}
+        noValidate
+        aria-label="Fire behavior observation form"
+      >
         {/* ---- Incident Overview ---- */}
         <section className="py-6">
           <SectionHeader

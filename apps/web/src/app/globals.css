@@ -127,6 +127,30 @@
   }
 }
 
+/* Skip navigation link — visually hidden until focused */
+.skip-nav-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 9999;
+  padding: 0.5rem 1rem;
+  background: var(--background);
+  color: var(--foreground);
+  border: 2px solid var(--ring);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.1s;
+}
+
+.skip-nav-link:focus {
+  top: 0.5rem;
+  left: 0.5rem;
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
 /* Firevector custom utilities */
 .fire-gradient {
   background: linear-gradient(135deg, #f59e0b, #ea580c, #ef4444);
