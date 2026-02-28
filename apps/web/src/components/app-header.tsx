@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, Flame, LayoutDashboard, Plus, Settings } from 'lucide-react';
+import { Menu, Flame, LayoutDashboard, Plus, BookOpen, Settings, Github } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import {
   Sheet,
@@ -27,6 +27,11 @@ const navItems = [
     label: 'New Observation',
     href: '/observations/new',
     icon: Plus,
+  },
+  {
+    label: 'Documentation',
+    href: '/docs',
+    icon: BookOpen,
   },
   {
     label: 'Settings',
@@ -128,6 +133,15 @@ export function AppHeader() {
       <div className="flex-1" aria-hidden="true" />
 
       {/* Right controls */}
+      <a
+        href="https://github.com/bgorzelic/firevector"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hidden sm:flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        aria-label="View source on GitHub"
+      >
+        <Github className="size-4" />
+      </a>
       <ThemeToggle />
       <UserMenu />
     </header>

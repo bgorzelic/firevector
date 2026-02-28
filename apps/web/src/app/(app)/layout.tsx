@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { AppHeader } from '@/components/app-header';
 import { AppSidebar } from '@/components/app-sidebar';
 import { MobileNav } from '@/components/mobile-nav';
+import { Footer } from '@/components/footer';
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
@@ -30,6 +31,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           {children}
         </main>
       </div>
+
+      {/* Footer */}
+      <Footer />
 
       {/* Mobile bottom nav */}
       <MobileNav />

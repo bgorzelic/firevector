@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
+import { CookieConsent } from '@/components/cookie-consent';
 import './globals.css';
 
 const inter = Inter({
@@ -35,6 +36,7 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             {children}
             <Toaster />
+            <CookieConsent />
           </ThemeProvider>
         </SessionProvider>
       </body>

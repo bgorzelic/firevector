@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Plus, Settings } from 'lucide-react';
+import { LayoutDashboard, Plus, BookOpen, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -15,6 +15,11 @@ const navItems = [
     label: 'New Observation',
     href: '/observations/new',
     icon: Plus,
+  },
+  {
+    label: 'Documentation',
+    href: '/docs',
+    icon: BookOpen,
   },
   {
     label: 'Settings',
