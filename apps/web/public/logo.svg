@@ -1,0 +1,63 @@
+<svg
+  width="64"
+  height="64"
+  viewBox="0 0 64 64"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-label="Firevector logo"
+>
+  <!-- Outer flame body -->
+  <path
+    d="M32 4C28 14 20 18 20 28C20 36.837 25.163 44 32 44C38.837 44 44 36.837 44 28C44 18 36 14 32 4Z"
+    fill="url(#flame-outer)"
+    opacity="0.9"
+  />
+  <!-- Inner flame core -->
+  <path
+    d="M32 18C30 24 26 26 26 32C26 36.418 28.686 40 32 40C35.314 40 38 36.418 38 32C38 26 34 24 32 18Z"
+    fill="url(#flame-inner)"
+  />
+  <!-- Vector arrow shaft — emerging from flame base upward-right -->
+  <line
+    x1="32"
+    y1="52"
+    x2="52"
+    y2="32"
+    stroke="url(#arrow-grad)"
+    stroke-width="3.5"
+    stroke-linecap="round"
+  />
+  <!-- Arrowhead -->
+  <path
+    d="M52 32L44 31L51 25"
+    stroke="url(#arrow-grad)"
+    stroke-width="3.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+  <!-- Base circle / ground contact -->
+  <circle
+    cx="32"
+    cy="52"
+    r="3"
+    fill="#EA580C"
+    opacity="0.7"
+  />
+
+  <defs>
+    <linearGradient id="flame-outer" x1="32" y1="4" x2="32" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="60%" stop-color="#EA580C" />
+      <stop offset="100%" stop-color="#DC2626" />
+    </linearGradient>
+    <linearGradient id="flame-inner" x1="32" y1="18" x2="32" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FDE68A" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+    <linearGradient id="arrow-grad" x1="32" y1="52" x2="52" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#EA580C" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+  </defs>
+</svg>
