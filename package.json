@@ -1,0 +1,16 @@
+{
+  "name": "firevector",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspace=apps/web",
+    "test:engine": "npm test --workspace=packages/engine",
+    "test:web": "npm test --workspace=apps/web",
+    "test:api": "cd services/api && uv run pytest",
+    "test": "npm run test:engine && npm run test:api"
+  }
+}
