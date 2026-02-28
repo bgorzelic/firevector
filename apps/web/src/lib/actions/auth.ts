@@ -43,16 +43,20 @@ export async function registerUser(formData: {
       .set({ passwordHash, name, updatedAt: new Date() })
       .where(eq(users.id, existing.id));
 
-    // Generate verification token
-    const token = crypto.randomBytes(32).toString('hex');
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-    await db.insert(emailVerificationTokens).values({
-      userId: existing.id,
-      token,
-      expires,
-    });
+    // Generate verification token and send email (best-effort)
+    try {
+      const token = crypto.randomBytes(32).toString('hex');
+      const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+      await db.insert(emailVerificationTokens).values({
+        userId: existing.id,
+        token,
+        expires,
+      });
+      await sendVerificationEmail(email, name, token);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+    }
 
-    await sendVerificationEmail(email, name, token);
     return { success: true };
   }
 
@@ -67,16 +71,21 @@ export async function registerUser(formData: {
     })
     .returning({ id: users.id });
 
-  // Generate verification token
-  const token = crypto.randomBytes(32).toString('hex');
-  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  await db.insert(emailVerificationTokens).values({
-    userId: newUser.id,
-    token,
-    expires,
-  });
+  // Generate verification token and send email (best-effort)
+  try {
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    await db.insert(emailVerificationTokens).values({
+      userId: newUser.id,
+      token,
+      expires,
+    });
+    await sendVerificationEmail(email, name, token);
+  } catch (emailError) {
+    console.error('Failed to send verification email:', emailError);
+    // User was created — they can request a resend later
+  }
 
-  await sendVerificationEmail(email, name, token);
   return { success: true };
 }
 
