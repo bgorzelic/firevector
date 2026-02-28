@@ -6,8 +6,13 @@ import { MobileNav } from '@/components/mobile-nav';
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
+      {/* Skip to main content — visually hidden until focused */}
+      <a href="#main-content" className="skip-nav-link">
+        Skip to main content
+      </a>
+
       {/* Fire gradient accent bar */}
-      <div className="h-1 w-full fire-gradient" />
+      <div className="h-1 w-full fire-gradient" aria-hidden="true" />
 
       {/* Header */}
       <AppHeader />
@@ -17,7 +22,11 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         <AppSidebar />
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto p-6 pb-24 md:pb-6">
+        <main
+          id="main-content"
+          className="flex-1 overflow-y-auto p-6 pb-24 md:pb-6"
+          tabIndex={-1}
+        >
           {children}
         </main>
       </div>

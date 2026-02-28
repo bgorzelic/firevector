@@ -21,10 +21,7 @@ export function LogSection({ form }: LogSectionProps) {
   return (
     <div className="space-y-4">
       {fields.map((field, index) => (
-        <div
-          key={field.id}
-          className="rounded-lg border border-border bg-card/50 p-4 space-y-3"
-        >
+        <div key={field.id} className="rounded-lg border border-border bg-card/50 p-4 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               Entry {index + 1}
@@ -38,7 +35,7 @@ export function LogSection({ form }: LogSectionProps) {
                 className="text-muted-foreground hover:text-destructive"
                 aria-label={`Remove entry ${index + 1}`}
               >
-                <Trash2 />
+                <Trash2 aria-hidden="true" />
               </Button>
             )}
           </div>
@@ -99,12 +96,10 @@ export function LogSection({ form }: LogSectionProps) {
         type="button"
         variant="outline"
         size="sm"
-        onClick={() =>
-          append({ time: '', fire_behavior_notes: '', weather_trends: '' })
-        }
+        onClick={() => append({ time: '', fire_behavior_notes: '', weather_trends: '' })}
         className="gap-2"
       >
-        <Plus />
+        <Plus aria-hidden="true" />
         Add Entry
       </Button>
     </div>
