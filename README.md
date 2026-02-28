@@ -33,7 +33,10 @@ Built for **Cal OES** and the broader firefighting community. Free forever -- no
 | **LCES safety checklist** | Live safety status indicator -- Lookouts, Communications, Escape Routes, Safety Zones -- with visual confirmation when all four are in place |
 | **Interactive map** | Mapbox GL JS dark map with amber observation pins, click-to-view popups showing EWS Ratio and Projected ROS |
 | **Command center dashboard** | Stats cards, observation table, and map view -- all in a dark tactical UI designed for readability |
-| **Google OAuth** | One-click sign-in with any Google account. No passwords to manage |
+| **Google OAuth + Email/Password** | Sign in with Google or traditional email/password. Full account linking between both methods |
+| **Email/password auth** | Register with email and password. Email verification, password reset, and account linking with Google OAuth |
+| **Two-factor authentication** | Optional TOTP 2FA with QR code setup. Compatible with Google Authenticator, Authy, and 1Password |
+| **Branded email system** | Professional transactional emails via Resend -- verification, password reset, and welcome emails with fire-themed branding |
 | **Draft/Complete workflow** | Save incomplete observations as drafts. Validation only enforced on completion |
 | **Mobile-ready** | Responsive design with bottom navigation, collapsible map, and touch-friendly targets for field use |
 | **WCAG 2.1 AA** | Accessible by design -- skip navigation, ARIA labels, focus management, screen reader announcements for live calculations |
@@ -57,9 +60,11 @@ graph TB
     end
 
     subgraph External["External Services"]
-        Auth["Google OAuth<br/>via NextAuth.js v5"]
+        Auth["NextAuth.js v5<br/>Google OAuth + Credentials"]
         DB["Vercel Postgres<br/>Drizzle ORM"]
         Maps["Mapbox GL JS<br/>Dark tactical tiles"]
+        Email["Resend<br/>Transactional email"]
+        TwoFA["TOTP 2FA<br/>otpauth + QR code"]
     end
 
     Schema --> Engine
@@ -68,6 +73,8 @@ graph TB
     Web --> Auth
     Web --> DB
     Web --> Maps
+    Web --> Email
+    Web --> TwoFA
 
     style Schema fill:#3178C6,color:#fff
     style Engine fill:#3178C6,color:#fff
@@ -75,6 +82,8 @@ graph TB
     style Auth fill:#EA4335,color:#fff
     style DB fill:#000,color:#fff
     style Maps fill:#4264FB,color:#fff
+    style Email fill:#F59E0B,color:#fff
+    style TwoFA fill:#10B981,color:#fff
 ```
 
 ### Calculation Data Flow
@@ -103,6 +112,9 @@ erDiagram
         text email UK
         text name
         text image
+        text password_hash
+        boolean two_factor_enabled
+        text two_factor_secret
         timestamp created_at
     }
     observations {
@@ -135,7 +147,21 @@ erDiagram
         text weather_trends
         integer sort_order
     }
+    email_verification_tokens {
+        uuid id PK
+        uuid user_id FK
+        text token UK
+        timestamp expires
+    }
+    password_reset_tokens {
+        uuid id PK
+        uuid user_id FK
+        text token UK
+        timestamp expires
+    }
     users ||--o{ observations : "creates"
+    users ||--o{ email_verification_tokens : "has"
+    users ||--o{ password_reset_tokens : "has"
     observations ||--o{ observation_log_entries : "contains"
 ```
 
@@ -149,7 +175,9 @@ erDiagram
 | **Language** | TypeScript 5.7 (strict) | End-to-end type safety from database to UI |
 | **UI** | Tailwind CSS v4 + shadcn/ui (New York) | Utility-first CSS with accessible Radix primitives |
 | **Theme** | oklch color system + next-themes | Dark tactical default with light and system modes |
-| **Auth** | NextAuth.js v5 + DrizzleAdapter | Google OAuth with database-backed sessions |
+| **Auth** | NextAuth.js v5 + DrizzleAdapter | Google OAuth + email/password + TOTP 2FA with JWT sessions |
+| **Email** | Resend | Transactional email with branded templates |
+| **2FA** | otpauth + qrcode | TOTP-based two-factor authentication |
 | **Database** | Vercel Postgres (Neon) + Drizzle ORM | Serverless PostgreSQL with type-safe, zero-overhead queries |
 | **Maps** | react-map-gl v8 + Mapbox GL JS | Hardware-accelerated maps with dark tiles |
 | **Forms** | react-hook-form + Zod v4 | Performant forms with schema validation |
@@ -164,10 +192,10 @@ erDiagram
 
 | Metric | Value |
 |--------|-------|
-| **Lines of code** | ~4,900 |
-| **Source files** | 59 |
-| **React components** | 33 |
-| **Commits** | 23 |
+| **Lines of code** | ~8,800 |
+| **Source files** | 83 |
+| **React components** | 45+ |
+| **Commits** | 34 |
 | **Unit tests** | 18 (calculation engine) |
 | **Build time** | ~5 seconds (Turbopack) |
 | **Lighthouse Performance** | Optimized for Core Web Vitals |
@@ -207,6 +235,9 @@ npm run dev
 | `GOOGLE_CLIENT_ID` | [Google Cloud Console](https://console.cloud.google.com/) | Yes |
 | `GOOGLE_CLIENT_SECRET` | Google Cloud Console | Yes |
 | `NEXT_PUBLIC_MAPBOX_TOKEN` | [Mapbox](https://account.mapbox.com/) | No (map shows placeholder) |
+| `RESEND_API_KEY` | [Resend Dashboard](https://resend.com) | Yes (for email features) |
+| `EMAIL_FROM` | e.g. `Firevector <noreply@firevector.org>` | No (defaults to noreply@firevector.org) |
+| `NEXTAUTH_URL` | Your deployment URL | Yes |
 
 ### Run Tests
 
@@ -229,14 +260,22 @@ npm test
 | [Deployment Guide](docs/deployment.md) | Step-by-step Vercel deployment with environment variable setup |
 | [Contributing](CONTRIBUTING.md) | Local setup, code style, PR process |
 | [Project Brief](docs/project-brief.md) | How this project was built -- timeline, cost, and methodology |
+| [DNS & Email Setup](docs/dns-setup.md) | Domain verification, Resend records, Cloudflare email routing |
+| [Project Metrics](docs/project-metrics.md) | Development timeline, cost analysis, and zero-dollar invoice |
 
 ---
 
 ## How It Was Built
 
-Firevector was designed, planned, and built in a **single session** using AI-assisted development with Claude Code (Anthropic). The entire project -- from brainstorming the design to deploying to production at firevector.org -- was completed in approximately **2.5 hours**.
+Firevector was designed, planned, and built in a **single session** using AI-assisted development with Claude Code (Anthropic). The entire project -- from brainstorming the design to deploying to production at firevector.org -- was completed in approximately **4 hours** (from 2:01 AM to 5:54 AM Pacific).
 
 See [docs/project-brief.md](docs/project-brief.md) for the full breakdown of timeline, costs, and methodology.
+
+---
+
+## Maintained By
+
+**[AI Aerial Solutions](https://aiaerialsolutions.com)** maintains Firevector as a free, open-source tool for the firefighting community. If the platform scales, AI Aerial Solutions will absorb the hosting and infrastructure costs -- our way of giving back to the brave men and women who protect lives and land every fire season.
 
 ---
 
