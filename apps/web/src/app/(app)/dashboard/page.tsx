@@ -1,35 +1,28 @@
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StatsCards } from '@/components/dashboard/stats-cards';
 import { ObservationsTable } from '@/components/dashboard/observations-table';
 import { ObservationsMap } from '@/components/dashboard/observations-map';
-import type { InferSelectModel } from 'drizzle-orm';
-import type { observations as observationsTable } from '@/lib/db/schema';
+import { auth } from '@/lib/auth';
+import { getObservations, getObservationStats } from '@/lib/actions/observations';
 
-type Observation = InferSelectModel<typeof observationsTable>;
+export default async function DashboardPage() {
+  const session = await auth();
+  if (!session?.user?.id) redirect('/login');
 
-// Mock data used until auth session is wired in and a real userId is available.
-const MOCK_OBSERVATIONS: Observation[] = [];
-
-const MOCK_STATS = {
-  total: 0,
-  drafts: 0,
-  completed: 0,
-};
-
-export default function DashboardPage() {
-  const stats = MOCK_STATS;
-  const obs = MOCK_OBSERVATIONS;
+  const [obs, stats] = await Promise.all([
+    getObservations(session.user.id),
+    getObservationStats(session.user.id),
+  ]);
 
   const mapPins = obs
-    .filter((o): o is Observation & { latitude: number; longitude: number } =>
-      o.latitude !== null && o.longitude !== null
-    )
+    .filter((o) => o.latitude !== null && o.longitude !== null)
     .map((o) => ({
       id: o.id,
-      latitude: o.latitude,
-      longitude: o.longitude,
+      latitude: o.latitude!,
+      longitude: o.longitude!,
       incidentName: o.incidentName,
       ewsRatio: o.ewsRatio,
       calculatedRos: o.calculatedRos,
