@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -17,9 +18,21 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://firevector.org'),
   title: 'Firevector — Wildfire Observation Intelligence',
   description:
     'Open-source wildfire behavior analysis tool for Cal OES and the firefighting community.',
+  openGraph: {
+    type: 'website',
+    siteName: 'Firevector',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
+  other: {
+    'theme-color': '#0a0a0a',
+  },
 };
 
 export default function RootLayout({
@@ -39,6 +52,7 @@ export default function RootLayout({
             <CookieConsent />
           </ThemeProvider>
         </SessionProvider>
+        <GoogleAnalytics gaId="G-6QL6YDHD7K" />
       </body>
     </html>
   );

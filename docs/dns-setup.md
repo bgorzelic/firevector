@@ -106,8 +106,8 @@ RESEND_API_KEY=re_xxxxxxxxxxxxx
 # Email sender (use your domain)
 EMAIL_FROM="YourApp <noreply@yourdomain.com>"
 
-# Your deployment URL
-NEXTAUTH_URL=https://yourdomain.com
+# Your deployment URL (used by NextAuth and email links)
+AUTH_URL=https://yourdomain.com
 ```
 
 Replace `yourdomain.com` with your actual domain throughout.

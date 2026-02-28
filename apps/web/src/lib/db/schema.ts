@@ -6,7 +6,9 @@ export const users = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
   email: text('email').notNull().unique(),
   emailVerified: timestamp('email_verified', { mode: 'date' }),
-  name: text('name'),
+  firstName: text('first_name'),
+  lastName: text('last_name'),
+  name: text('name'), // Composed "First Last" — kept for NextAuth/Google OAuth compat
   image: text('image'),
   passwordHash: text('password_hash'),
   twoFactorEnabled: boolean('two_factor_enabled').notNull().default(false),

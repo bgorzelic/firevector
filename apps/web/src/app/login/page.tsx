@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { LoginForm } from '@/components/login-form';
 
 export const metadata: Metadata = {
@@ -74,8 +75,15 @@ export default function LoginPage() {
       </main>
 
       {/* Footer */}
-      <footer className="absolute bottom-6 text-center">
-        <p className="text-[11px] text-zinc-700">MIT Licensed | Open Source on GitHub</p>
+      <footer className="absolute bottom-6 flex flex-col items-center gap-1.5 text-center">
+        <p className="text-[11px] text-zinc-600">Built for Cal OES and the firefighting community</p>
+        <p className="text-[11px] text-zinc-700">
+          <Link href="/privacy" className="hover:text-zinc-500 transition-colors">Privacy Policy</Link>
+          {' | '}
+          <Link href="/terms" className="hover:text-zinc-500 transition-colors">Terms of Service</Link>
+          {' | '}
+          MIT Licensed
+        </p>
       </footer>
     </div>
   );

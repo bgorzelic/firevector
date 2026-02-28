@@ -7,6 +7,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { registerSchema, forgotPasswordSchema, resetPasswordSchema } from '@/lib/validations/auth';
 import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from '@/lib/email';
+import { seedSampleObservations } from '@/lib/actions/observations';
 
 type ActionResult = {
   success: boolean;
@@ -14,7 +15,8 @@ type ActionResult = {
 };
 
 export async function registerUser(formData: {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -24,7 +26,8 @@ export async function registerUser(formData: {
     return { success: false, error: parsed.error.issues[0]?.message ?? 'Invalid input' };
   }
 
-  const { name, email, password } = parsed.data;
+  const { firstName, lastName, email, password } = parsed.data;
+  const name = `${firstName} ${lastName}`.trim();
 
   const existing = await db
     .select({ id: users.id, passwordHash: users.passwordHash })
@@ -40,7 +43,7 @@ export async function registerUser(formData: {
     const passwordHash = await bcrypt.hash(password, 12);
     await db
       .update(users)
-      .set({ passwordHash, name, updatedAt: new Date() })
+      .set({ passwordHash, firstName, lastName, name, updatedAt: new Date() })
       .where(eq(users.id, existing.id));
 
     // Generate verification token and send email (best-effort)
@@ -52,7 +55,7 @@ export async function registerUser(formData: {
         token,
         expires,
       });
-      await sendVerificationEmail(email, name, token);
+      await sendVerificationEmail(email, firstName, token);
     } catch (emailError) {
       console.error('Failed to send verification email:', emailError);
     }
@@ -66,6 +69,8 @@ export async function registerUser(formData: {
     .insert(users)
     .values({
       email,
+      firstName,
+      lastName,
       name,
       passwordHash,
     })
@@ -80,11 +85,14 @@ export async function registerUser(formData: {
       token,
       expires,
     });
-    await sendVerificationEmail(email, name, token);
+    await sendVerificationEmail(email, firstName, token);
   } catch (emailError) {
     console.error('Failed to send verification email:', emailError);
     // User was created — they can request a resend later
   }
+
+  // Seed sample observations so new users see a populated dashboard
+  await seedSampleObservations(newUser.id);
 
   return { success: true };
 }
@@ -120,13 +128,13 @@ export async function verifyEmail(token: string): Promise<ActionResult> {
 
   // Send welcome email
   const user = await db
-    .select({ name: users.name, email: users.email })
+    .select({ firstName: users.firstName, name: users.name, email: users.email })
     .from(users)
     .where(eq(users.id, record.userId))
     .then((rows) => rows[0]);
 
   if (user) {
-    await sendWelcomeEmail(user.email, user.name ?? 'there');
+    await sendWelcomeEmail(user.email, user.firstName ?? user.name ?? 'there');
   }
 
   return { success: true };
@@ -134,7 +142,7 @@ export async function verifyEmail(token: string): Promise<ActionResult> {
 
 export async function resendVerificationEmail(email: string): Promise<ActionResult> {
   const user = await db
-    .select({ id: users.id, name: users.name, emailVerified: users.emailVerified })
+    .select({ id: users.id, firstName: users.firstName, name: users.name, emailVerified: users.emailVerified })
     .from(users)
     .where(eq(users.email, email))
     .then((rows) => rows[0]);
@@ -173,7 +181,7 @@ export async function resendVerificationEmail(email: string): Promise<ActionResu
     expires,
   });
 
-  await sendVerificationEmail(email, user.name ?? 'there', token);
+  await sendVerificationEmail(email, user.firstName ?? user.name ?? 'there', token);
   return { success: true };
 }
 
@@ -188,7 +196,7 @@ export async function requestPasswordReset(formData: {
   const { email } = parsed.data;
 
   const user = await db
-    .select({ id: users.id, name: users.name, passwordHash: users.passwordHash })
+    .select({ id: users.id, firstName: users.firstName, name: users.name, passwordHash: users.passwordHash })
     .from(users)
     .where(eq(users.email, email))
     .then((rows) => rows[0]);
@@ -225,7 +233,7 @@ export async function requestPasswordReset(formData: {
     expires,
   });
 
-  await sendPasswordResetEmail(email, user.name ?? 'there', token);
+  await sendPasswordResetEmail(email, user.firstName ?? user.name ?? 'there', token);
   return { success: true };
 }
 

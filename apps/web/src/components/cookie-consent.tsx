@@ -8,9 +8,11 @@ import { Cookie } from 'lucide-react';
 const COOKIE_KEY = 'firevector-cookie-consent';
 
 export function CookieConsent() {
+  const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const consent = localStorage.getItem(COOKIE_KEY);
     if (!consent) setVisible(true);
   }, []);
@@ -25,7 +27,7 @@ export function CookieConsent() {
     setVisible(false);
   }
 
-  if (!visible) return null;
+  if (!mounted || !visible) return null;
 
   return (
     <div

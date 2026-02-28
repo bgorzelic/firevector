@@ -10,9 +10,10 @@ function getResend(): Resend {
 }
 
 const EMAIL_FROM = process.env.EMAIL_FROM || 'Firevector <noreply@firevector.org>';
+const BASE_URL = process.env.AUTH_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
 
 export async function sendVerificationEmail(email: string, name: string, token: string) {
-  const verifyUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${token}`;
+  const verifyUrl = `${BASE_URL}/verify-email?token=${token}`;
 
   const { emailVerificationTemplate } = await import('./email-templates');
 
@@ -25,7 +26,7 @@ export async function sendVerificationEmail(email: string, name: string, token: 
 }
 
 export async function sendPasswordResetEmail(email: string, name: string, token: string) {
-  const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${token}`;
+  const resetUrl = `${BASE_URL}/reset-password?token=${token}`;
 
   const { passwordResetTemplate } = await import('./email-templates');
 
@@ -38,7 +39,7 @@ export async function sendPasswordResetEmail(email: string, name: string, token:
 }
 
 export async function sendWelcomeEmail(email: string, name: string) {
-  const loginUrl = `${process.env.NEXTAUTH_URL}/login`;
+  const loginUrl = `${BASE_URL}/login`;
 
   const { welcomeTemplate } = await import('./email-templates');
 

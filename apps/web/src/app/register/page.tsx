@@ -86,7 +86,13 @@ export default function RegisterPage() {
 
       {/* Footer */}
       <footer className="absolute bottom-6 text-center">
-        <p className="text-[11px] text-zinc-700">MIT Licensed | Open Source on GitHub</p>
+        <p className="text-[11px] text-zinc-700">
+          <Link href="/privacy" className="hover:text-zinc-500 transition-colors">Privacy Policy</Link>
+          {' | '}
+          <Link href="/terms" className="hover:text-zinc-500 transition-colors">Terms of Service</Link>
+          {' | '}
+          MIT Licensed
+        </p>
       </footer>
     </div>
   );

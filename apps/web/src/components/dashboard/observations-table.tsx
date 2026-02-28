@@ -1,5 +1,9 @@
+'use client';
+
 import type { InferSelectModel } from 'drizzle-orm';
 import type { observations } from '@/lib/db/schema';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -60,38 +64,41 @@ function EmptyState() {
   );
 }
 
-// Mobile card view for each observation
 function ObservationCard({ obs }: { obs: Observation }) {
   return (
-    <Card className="mb-3">
-      <CardContent className="pt-4">
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <p className="font-medium leading-tight">
-              {obs.incidentName || <span className="text-muted-foreground italic">Unnamed</span>}
-            </p>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              {formatDatetime(obs.observationDatetime)}
-            </p>
+    <Link href={`/observations/${obs.id}`} className="block">
+      <Card className="mb-3 transition-colors hover:bg-accent/50">
+        <CardContent className="pt-4">
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <p className="font-medium leading-tight">
+                {obs.incidentName || <span className="text-muted-foreground italic">Unnamed</span>}
+              </p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {formatDatetime(obs.observationDatetime)}
+              </p>
+            </div>
+            <StatusBadge status={obs.status} />
           </div>
-          <StatusBadge status={obs.status} />
-        </div>
-        <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-          <div>
-            <p className="text-xs text-muted-foreground">EWS Ratio</p>
-            <p className="font-mono-numbers font-medium">{formatNumber(obs.ewsRatio)}</p>
+          <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+            <div>
+              <p className="text-xs text-muted-foreground">EWS Ratio</p>
+              <p className="font-mono-numbers font-medium">{formatNumber(obs.ewsRatio)}</p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Projected ROS</p>
+              <p className="font-mono-numbers font-medium">{formatNumber(obs.calculatedRos)}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Projected ROS</p>
-            <p className="font-mono-numbers font-medium">{formatNumber(obs.calculatedRos)}</p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
 
 export function ObservationsTable({ observations }: ObservationsTableProps) {
+  const router = useRouter();
+
   if (observations.length === 0) {
     return <EmptyState />;
   }
@@ -112,7 +119,11 @@ export function ObservationsTable({ observations }: ObservationsTableProps) {
           </TableHeader>
           <TableBody>
             {observations.map((obs) => (
-              <TableRow key={obs.id}>
+              <TableRow
+                key={obs.id}
+                className="cursor-pointer transition-colors hover:bg-accent/50"
+                onClick={() => router.push(`/observations/${obs.id}`)}
+              >
                 <TableCell className="font-medium">
                   {obs.incidentName || (
                     <span className="italic text-muted-foreground">Unnamed</span>

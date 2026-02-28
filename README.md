@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="apps/web/public/logo.svg" alt="Firevector" width="64" height="64" />
+</p>
+
 # Firevector
 
 **Wildfire observation intelligence for the field. Free, open-source, built for firefighters.**
@@ -237,7 +241,6 @@ npm run dev
 | `NEXT_PUBLIC_MAPBOX_TOKEN` | [Mapbox](https://account.mapbox.com/) | No (map shows placeholder) |
 | `RESEND_API_KEY` | [Resend Dashboard](https://resend.com) | Yes (for email features) |
 | `EMAIL_FROM` | e.g. `Firevector <noreply@firevector.org>` | No (defaults to noreply@firevector.org) |
-| `NEXTAUTH_URL` | Your deployment URL | Yes |
 
 ### Run Tests
 
@@ -255,6 +258,7 @@ npm test
 
 | Document | Description |
 |----------|-------------|
+| [User Guide](docs/user-guide.md) | Getting started, creating observations, understanding calculations |
 | [Architecture](docs/architecture.md) | System design, auth flow, component hierarchy (with Mermaid diagrams) |
 | [Domain Model](docs/domain-model.md) | Fire behavior concepts explained -- EWS, ROS, LCES for non-firefighters |
 | [Deployment Guide](docs/deployment.md) | Step-by-step Vercel deployment with environment variable setup |
