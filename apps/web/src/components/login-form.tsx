@@ -1,5 +1,6 @@
 'use client';
 
+import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 
 function GoogleIcon() {
@@ -35,16 +36,14 @@ function GoogleIcon() {
 
 export function LoginForm() {
   return (
-    <form action="/api/auth/signin/google" method="GET">
-      <Button
-        type="submit"
-        size="lg"
-        variant="outline"
-        className="w-full gap-3 text-base border-zinc-700 bg-zinc-900 text-zinc-100 hover:bg-zinc-800 hover:text-white hover:border-zinc-600 transition-all duration-200 shadow-lg"
-      >
-        <GoogleIcon />
-        Sign in with Google
-      </Button>
-    </form>
+    <Button
+      size="lg"
+      variant="outline"
+      className="w-full gap-3 text-base border-zinc-700 bg-zinc-900 text-zinc-100 hover:bg-zinc-800 hover:text-white hover:border-zinc-600 transition-all duration-200 shadow-lg"
+      onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+    >
+      <GoogleIcon />
+      Sign in with Google
+    </Button>
   );
 }
