@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.nwcg.gov)",
+      "WebFetch(domain:research.fs.usda.gov)",
+      "WebFetch(domain:docslib.org)",
+      "Bash(textutil -stdout -cat txt /Users/bgorzelic/dev/projects/firevector/chatgpt_reframe.rtf)",
+      "Bash(node --version)",
+      "Bash(npm --version)",
+      "Bash(uv --version)",
+      "Bash(npx --yes create-next-app --help)",
+      "Bash(python3 -c \"import sys; print\\(sys.version\\)\")",
+      "WebFetch(domain:open-meteo.com)",
+      "Bash(npm view next version)",
+      "Bash(npm view react version)",
+      "Bash(npm view typescript version)",
+      "Bash(npm view react-hook-form version)",
+      "Bash(npm view zod version)",
+      "Bash(npm view @tanstack/react-query version)",
+      "Bash(npm view tailwindcss version)",
+      "Bash(npm view @tailwindcss/forms version)",
+      "Bash(npm view lucide-react version)",
+      "Bash(pip3 install --dry-run fastapi sqlalchemy uvicorn httpx pydantic)",
+      "Bash(pip3 show fastapi)",
+      "Bash(pip3 show sqlalchemy)",
+      "Bash(uv pip show fastapi)",
+      "Bash(uv pip show sqlalchemy)",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); print\\(data[0][''text'']\\)\")",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); text=data[0][''text'']; lines=text.split\\(''\\\\n''\\); print\\(''\\\\n''.join\\(lines[500:]\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; data=json.load\\(sys.stdin\\); text=data[0][''text'']; lines=text.split\\(''\\\\n''\\); print\\(''\\\\n''.join\\(lines[900:]\\)\\)\")",
+      "Bash(git init)",
+      "Bash(git add .gitignore package.json packages/ services/ apps/)",
+      "Bash(git commit:*)",
+      "Bash(git branch -m main)",
+      "Bash(npm install)",
+      "Bash(npm run test:engine)",
+      "Bash(git add packages/schema/ packages/engine/ package-lock.json)",
+      "Bash(gh auth status)",
+      "Bash(gh repo create firevector --public --source=/Users/bgorzelic/dev/projects/firevector --push)",
+      "Bash(git -C /Users/bgorzelic/dev/projects/firevector log --oneline -20)"
+    ]
+  }
+}
