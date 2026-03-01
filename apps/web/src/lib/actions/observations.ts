@@ -182,7 +182,7 @@ export async function seedSampleObservations(userId: string) {
     const dixieDate = new Date('2024-07-14T10:15:00');
     const parkDate = new Date('2024-07-24T16:45:00');
 
-    const [creekObs, dixieObs, parkObs] = await db
+    const [creekObs, dixieObs] = await db
       .insert(observations)
       .values([
         {

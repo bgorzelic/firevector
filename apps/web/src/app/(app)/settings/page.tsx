@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
 import { users } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { Separator } from '@/components/ui/separator';
+import { ProfileForm } from '@/components/settings/profile-form';
 import { TwoFactorSetup } from '@/components/settings/two-factor-setup';
 
 export const metadata: Metadata = {
@@ -17,7 +19,12 @@ export default async function SettingsPage() {
   }
 
   const user = await db
-    .select({ twoFactorEnabled: users.twoFactorEnabled })
+    .select({
+      firstName: users.firstName,
+      lastName: users.lastName,
+      email: users.email,
+      twoFactorEnabled: users.twoFactorEnabled,
+    })
     .from(users)
     .where(eq(users.id, session.user.id))
     .then((rows) => rows[0]);
@@ -35,6 +42,24 @@ export default async function SettingsPage() {
         </p>
       </div>
 
+      {/* Profile */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-lg font-semibold">Profile</h2>
+          <p className="text-sm text-muted-foreground">
+            Update your personal information.
+          </p>
+        </div>
+        <ProfileForm
+          firstName={user.firstName ?? ''}
+          lastName={user.lastName ?? ''}
+          email={user.email}
+        />
+      </section>
+
+      <Separator />
+
+      {/* Security */}
       <section className="space-y-4">
         <div>
           <h2 className="text-lg font-semibold">Security</h2>

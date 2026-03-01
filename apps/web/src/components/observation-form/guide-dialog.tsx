@@ -57,6 +57,7 @@ export function FormGuideDialog() {
 
   useEffect(() => {
     const dismissed = localStorage.getItem(GUIDE_KEY);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reading localStorage only available after mount
     if (!dismissed) setOpen(true);
   }, []);
 

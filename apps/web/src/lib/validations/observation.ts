@@ -1,12 +1,5 @@
 import { z } from 'zod';
 
-// Wind/slope column — all numeric fields optional at the form level
-const windSlopeColumnSchema = z.object({
-  eye_level_ws: z.number().min(0).optional(),
-  midflame_ws: z.number().min(0).optional(),
-  slope_contribution: z.number().min(0).optional(),
-});
-
 // A single observation log entry
 export const observationEntrySchema = z.object({
   time: z.string(),

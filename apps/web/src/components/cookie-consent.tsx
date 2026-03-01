@@ -12,6 +12,7 @@ export function CookieConsent() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration-safety: must detect client mount via state
     setMounted(true);
     const consent = localStorage.getItem(COOKIE_KEY);
     if (!consent) setVisible(true);

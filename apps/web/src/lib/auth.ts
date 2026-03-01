@@ -16,6 +16,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     accountsTable: accounts,
     sessionsTable: sessions,
     verificationTokensTable: verificationTokens,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any),
   session: { strategy: 'jwt' },
   providers: [
@@ -64,6 +65,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         token.twoFactorEnabled = (user as any).twoFactorEnabled ?? false;
       }
       return token;

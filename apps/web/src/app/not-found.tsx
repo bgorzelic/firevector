@@ -24,7 +24,7 @@ export default function NotFound() {
         Lost in the smoke
       </h1>
       <p className="mb-2 max-w-sm text-base text-muted-foreground">
-        This page drifted off course. The observation you're looking for doesn't exist or has been
+        This page drifted off course. The observation you&apos;re looking for doesn&apos;t exist or has been
         moved.
       </p>
       <p className="mb-8 font-mono text-xs text-muted-foreground/50">HTTP 404 — Not Found</p>

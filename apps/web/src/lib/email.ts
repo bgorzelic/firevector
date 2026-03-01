@@ -10,7 +10,7 @@ function getResend(): Resend {
 }
 
 const EMAIL_FROM = process.env.EMAIL_FROM || 'Firevector <noreply@firevector.org>';
-const BASE_URL = process.env.AUTH_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
+const BASE_URL = process.env.AUTH_URL || 'http://localhost:3000';
 
 export async function sendVerificationEmail(email: string, name: string, token: string) {
   const verifyUrl = `${BASE_URL}/verify-email?token=${token}`;

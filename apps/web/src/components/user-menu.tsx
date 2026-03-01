@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
 import {
   DropdownMenu,
@@ -34,9 +35,11 @@ export function UserMenu() {
             aria-label={`User menu for ${user.name ?? 'user'}`}
             aria-haspopup="menu"
           >
-            <img
+            <Image
               src={user.image}
               alt={user.name ?? 'User avatar'}
+              width={36}
+              height={36}
               className="size-9 rounded-full"
               referrerPolicy="no-referrer"
             />

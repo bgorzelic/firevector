@@ -1,6 +1,6 @@
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { eq } from 'drizzle-orm';
+
 import * as schema from '../src/lib/db/schema';
 import { recompute } from '@firevector/engine';
 import type { WindSlope, RateOfSpread } from '@firevector/schema';
