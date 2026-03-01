@@ -136,6 +136,25 @@ export async function createObservation(userId: string, data: ObservationFormVal
   redirect('/dashboard');
 }
 
+export async function deleteObservation(userId: string, observationId: string) {
+  // Verify ownership before deleting
+  const [obs] = await db
+    .select({ id: observations.id })
+    .from(observations)
+    .where(and(eq(observations.id, observationId), eq(observations.userId, userId)))
+    .limit(1);
+
+  if (!obs) {
+    return { success: false, error: 'Observation not found' };
+  }
+
+  // Log entries cascade-delete via FK ON DELETE CASCADE
+  await db.delete(observations).where(eq(observations.id, observationId));
+
+  revalidatePath('/dashboard');
+  return { success: true };
+}
+
 export async function seedSampleObservations(userId: string) {
   try {
     // Creek Fire — Fresno County, complete, high EWS

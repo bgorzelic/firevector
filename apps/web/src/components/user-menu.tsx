@@ -10,7 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut } from 'lucide-react';
+import { LogOut, Settings } from 'lucide-react';
+import Link from 'next/link';
 
 function getInitials(name: string | null | undefined): string {
   if (!name) return '?';
@@ -59,6 +60,13 @@ export function UserMenu() {
           <span className="font-semibold">{user?.name ?? 'User'}</span>
           <span className="text-xs font-normal text-muted-foreground">{user?.email ?? ''}</span>
         </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/settings">
+            <Settings className="size-4" aria-hidden="true" />
+            Settings
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           variant="destructive"
