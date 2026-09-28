@@ -1,6 +1,6 @@
 # Domain Model
 
-This document explains the fire behavior concepts behind Firevector in plain English. It is written for developers and contributors who may not have a wildfire background.
+This document explains the fire behavior concepts behind Firevector in clear, accessible language. It is written for developers and contributors who may not have a wildfire background.
 
 ## Overview
 

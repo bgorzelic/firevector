@@ -1000,7 +1000,7 @@ Step-by-step Vercel deployment:
 
 **Step 6: Write docs/domain-model.md**
 
-Plain-English explanation of fire behavior concepts:
+Clear explanation of fire behavior concepts:
 - What is EWS (Effective Wind Speed) and why it matters
 - What is ROS (Rate of Spread) and how it's calculated
 - The LCES safety protocol (Lookouts, Communications, Escape Routes, Safety Zones)
